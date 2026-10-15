@@ -410,6 +410,32 @@ describe('Form Directives', () => {
         expect(formModel.get(['person', 'login'])).not.toBeNull();
       });
 
+      it('should ignore a control when its parent group was removed before registration', async () => {
+        form.addFormGroup(personControlGroupDir);
+        await timeout();
+
+        form.removeFormGroup(personControlGroupDir);
+        form.addControl(loginControlDir);
+
+        await timeout();
+
+        expect(formModel.get(['person', 'login'])).toBeNull();
+      });
+
+      it('should ignore a group when its parent group was removed before registration', async () => {
+        const nestedGroup = new NgModelGroup(personControlGroupDir, [], []);
+        nestedGroup.name = 'address';
+        form.addFormGroup(personControlGroupDir);
+        await timeout();
+
+        form.removeFormGroup(personControlGroupDir);
+        form.addFormGroup(nestedGroup);
+
+        await timeout();
+
+        expect(formModel.get(['person', 'address'])).toBeNull();
+      });
+
       // should update the form's value and validity
     });
 
